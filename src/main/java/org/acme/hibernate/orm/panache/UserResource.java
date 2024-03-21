@@ -34,4 +34,32 @@ public class UserResource {
 
     }
 
+    @DELETE
+    @Path("{id}")
+    @Transactional
+    public Response deleteUser(Long id){
+        User userEntity = User.findById(id);
+        if(userEntity == null){
+          return  Response.status(Response.Status.NOT_FOUND).build();
+        }
+        userEntity.delete();
+        return  Response.ok().status(204).build();
+    }
+    @PUT
+    @Path("{id}")
+    @Transactional
+    public Response updateUser( Long id, CreateUserRequestDTo userRequestDTo){
+        User userEntity = User.findById(id);
+        if(userEntity == null){
+            return  Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        userEntity.setName(userRequestDTo.getName());
+        userEntity.setAge(userRequestDTo.getAge());
+
+        return  Response.ok().build();
+    }
+
+
+
 }
