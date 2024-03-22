@@ -13,6 +13,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.acme.hibernate.orm.panache.dto.CreateUserRequestDTo;
+import org.acme.hibernate.orm.panache.exceptions.ResponseError;
 import org.acme.hibernate.orm.panache.services.UserService;
 
 import java.util.Set;
@@ -34,11 +35,10 @@ public class UserResource {
         Set<ConstraintViolation<CreateUserRequestDTo>> violations = validator.validate(userRequestDTo);
 
         if(!violations.isEmpty()){
-            ConstraintViolation<CreateUserRequestDTo> erro = violations.stream().findAny().get();
-            String ErrorMessage = erro.getMessage();
-
-            return Response.status(Response.Status.BAD_REQUEST).entity(ErrorMessage).build();
+            ResponseError responseError = ResponseError.createFromValidation(violations);
+            return Response.status(Response.Status.BAD_REQUEST).entity(responseError).build();
         }
+
         User user = new User();
         user.setName(userRequestDTo.getName());
         user.setAge(userRequestDTo.getAge());
