@@ -3,8 +3,10 @@ package org.acme.hibernate.orm.panache.models;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 import org.acme.hibernate.orm.panache.User;
+import org.acme.hibernate.orm.panache.enums.Role;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "accounts")
@@ -18,6 +20,16 @@ public class Account  extends PanacheEntity {
     @ManyToOne
     @JoinColumn(name = "agency_id", nullable = false)
     public Agency agency_id;
+
+    @OneToMany(mappedBy = "account_id",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SpecialAccount> specialAccounts;
+
+    @OneToMany(mappedBy = "account_id",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PremiumAccount> premiumAccounts;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     public Agency getAgency_id() {
         return agency_id;
