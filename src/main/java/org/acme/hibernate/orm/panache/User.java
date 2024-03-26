@@ -3,7 +3,10 @@ package org.acme.hibernate.orm.panache;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
+import org.acme.hibernate.orm.panache.models.Account;
+
+
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -22,6 +25,8 @@ public class User extends  PanacheEntity {
     @Column
     public String password;
 
+    @OneToMany(mappedBy = "user_id", cascade = CascadeType.REMOVE)
+    public List<Account> accounts;
 
     public String getUsername() {
         return username;

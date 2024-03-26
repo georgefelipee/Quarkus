@@ -61,4 +61,31 @@ public class BankResource {
         return Response.ok(bank).status(200).build();
     }
 
+    @DELETE
+    @Path("/{id}")
+    @Transactional
+    public Response deleteBank(@PathParam("id") Long id){
+        Bank bank = Bank.findById(id);
+        if(bank == null){
+            return Response.status(Response.Status.NOT_FOUND).entity("Banco não encontrado!").build();
+        }
+        bank.delete();
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    @Transactional
+    public Response updateBank(@PathParam("id") Long id, CreateBankDTO bankRequestDTO){
+        Bank bank = Bank.findById(id);
+        if(bank == null){
+            return Response.status(Response.Status.NOT_FOUND).entity("Banco não encontrado!").build();
+        }
+
+        bank.setNameBank(bankRequestDTO.getNameBank());
+
+        return Response.ok(bank).status(200).build();
+    }
+
+
 }
