@@ -1,12 +1,11 @@
 package org.acme.hibernate.orm.panache.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 import org.acme.hibernate.orm.panache.User;
-import org.acme.hibernate.orm.panache.enums.Role;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Entity
 @Table(name = "accounts")
@@ -21,15 +20,26 @@ public class Account  extends PanacheEntity {
     @JoinColumn(name = "agency_id", nullable = false)
     public Agency agency_id;
 
-    @OneToMany(mappedBy = "account_id",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SpecialAccount> specialAccounts;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "type_account_id", nullable = false)
+    public TypeAccount typeAccount_id;
 
-    @OneToMany(mappedBy = "account_id",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PremiumAccount> premiumAccounts;
+    public int getBalanceInCents() {
+        return balanceInCents;
+    }
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    public void setBalanceInCents(int balanceInCents) {
+        this.balanceInCents = balanceInCents;
+    }
+
+    public TypeAccount getTypeAccount_id() {
+        return typeAccount_id;
+    }
+
+    public void setTypeAccount_id(TypeAccount typeAccount_id) {
+        this.typeAccount_id = typeAccount_id;
+    }
 
     public Agency getAgency_id() {
         return agency_id;
@@ -54,4 +64,6 @@ public class Account  extends PanacheEntity {
     public void setBalance(BigDecimal balance) {
         this.balanceInCents = balance.movePointRight(2).intValue(); // Convertendo BigDecimal para centavos
     }
+
+
 }

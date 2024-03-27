@@ -1,5 +1,6 @@
 package org.acme.hibernate.orm.panache;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 import jakarta.persistence.*;
@@ -26,6 +27,7 @@ public class User extends  PanacheEntity {
     public String password;
 
     @OneToMany(mappedBy = "user_id", cascade = CascadeType.REMOVE)
+    @JsonIgnore
     public List<Account> accounts;
 
     public String getUsername() {

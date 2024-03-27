@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.acme.hibernate.orm.panache.dto.CreateAgencyDTO;
@@ -30,12 +31,7 @@ public class AgencyResource {
 
     @POST
     @Transactional
-    public Response createAgency(CreateAgencyDTO agencyRequestDTO){
-        Set<ConstraintViolation<CreateAgencyDTO>> violations = validator.validate(agencyRequestDTO);
-        if(!violations.isEmpty()){
-            ResponseError responseError = ResponseError.createFromValidation(violations);
-            return Response.status(Response.Status.BAD_REQUEST).entity(responseError).build();
-        }
+    public Response createAgency(@Valid CreateAgencyDTO agencyRequestDTO){
 
         try {
             Bank bank = Bank.findById(agencyRequestDTO.getBank_id());
@@ -48,6 +44,7 @@ public class AgencyResource {
             agency.setNameAgency(agencyRequestDTO.getNameAgency()); // Supondo que o DTO tenha um método getName() para obter o nome da agência
             agency.setBank_id(bank);
             agency.persist();
+
 
             // Retornar uma resposta de sucesso
         } catch (Exception e) {

@@ -1,6 +1,6 @@
 package org.acme.hibernate.orm.panache.enums;
 
-public enum Role {
+public enum AccountType {
     NORMAL,
     SPECIAL,
     PREMIUM,

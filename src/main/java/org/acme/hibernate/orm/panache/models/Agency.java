@@ -1,5 +1,6 @@
 package org.acme.hibernate.orm.panache.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 
@@ -16,6 +17,8 @@ public class Agency  extends PanacheEntity {
     @JoinColumn(name = "bank_id", nullable = false)
     public Bank bank_id;
 
+
+    @JsonIgnore
     @OneToMany(mappedBy = "agency_id",cascade = CascadeType.ALL, orphanRemoval = true)
     public List<Account> accounts;
 
