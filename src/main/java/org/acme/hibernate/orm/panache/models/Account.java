@@ -25,14 +25,6 @@ public class Account  extends PanacheEntity {
     @JoinColumn(name = "type_account_id", nullable = false)
     public TypeAccount typeAccount_id;
 
-    public int getBalanceInCents() {
-        return balanceInCents;
-    }
-
-    public void setBalanceInCents(int balanceInCents) {
-        this.balanceInCents = balanceInCents;
-    }
-
     public TypeAccount getTypeAccount_id() {
         return typeAccount_id;
     }

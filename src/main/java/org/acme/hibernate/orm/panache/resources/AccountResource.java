@@ -10,6 +10,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.acme.hibernate.orm.panache.User;
 import org.acme.hibernate.orm.panache.dto.CreateAccountDTO;
+import org.acme.hibernate.orm.panache.dto.DepositAccountDTO;
 import org.acme.hibernate.orm.panache.enums.AccountType;
 import org.acme.hibernate.orm.panache.exceptions.ErrorResponseEdit;
 import org.acme.hibernate.orm.panache.exceptions.ResponseError;
@@ -101,6 +102,23 @@ public class AccountResource {
         }
         account.delete();
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @POST
+    @Path("/deposit/{id}")
+    @Transactional
+    public Response depositAccount(@PathParam("id") Long id, DepositAccountDTO depositRequestDTO){
+        //Recebo em REAL R$1,00
+        Account account = Account.findById(id);
+        if(account == null){
+            return Response.status(Response.Status.NOT_FOUND).entity("Conta não encontrada!").build();
+        }
+
+        account.setBalance(depositRequestDTO.getBalance());
+
+        return Response.status(200).entity("Depósito cocluído!").build();
+
+
     }
 
 
