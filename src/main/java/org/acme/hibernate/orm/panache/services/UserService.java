@@ -18,5 +18,16 @@ public class UserService {
         return query.count() > 0;
     }
 
+    public User findByUsername(String username){
+        return User.find("username", username).firstResult();
+    }
+
+    public User findByEmail(String email){
+        return User.find("email", email).firstResult();
+    }
+    public User findByEmailOrUsername(String emailOrUsername){
+        return User.find("email = ?1 or username = ?2", emailOrUsername, emailOrUsername).firstResult();
+    }
+
 
 }

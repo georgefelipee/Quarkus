@@ -13,10 +13,12 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.acme.hibernate.orm.panache.dto.CreateUserRequestDTo;
+import org.acme.hibernate.orm.panache.dto.LoginDTO;
 import org.acme.hibernate.orm.panache.exceptions.ResponseError;
 import org.acme.hibernate.orm.panache.services.UserService;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
 @Path("/users")
 @ApplicationScoped
@@ -90,6 +92,41 @@ public class UserResource {
         userEntity.setAge(userRequestDTo.getAge());
 
         return  Response.ok().build();
+    }
+
+    @POST
+    @Path("/login")
+    @Transactional
+    public Response login(@Valid LoginDTO loginRequestDTO){
+        if(loginRequestDTO.getEmail() == null && loginRequestDTO.getUsername() == null){
+            return Response.status(Response.Status.BAD_REQUEST).entity("Email ou nome de usuário é obrigatório!").build();
+        }
+
+        if(loginRequestDTO.getEmail() == null){
+           User user = userService.findByUsername(loginRequestDTO.getUsername());
+           if(user == null){
+                return Response.status(Response.Status.NOT_FOUND).entity("Usuário não encontrado!").build();
+           }
+
+           if(!user.getPassword().equals(loginRequestDTO.getPassword())){
+                return Response.status(Response.Status.BAD_REQUEST).entity("Senha inválida!").build();
+           }
+
+           return Response.ok().status(200).entity("Login feito com sucesso!").build();
+
+        } else {
+            User user = userService.findByEmail(loginRequestDTO.getEmail());
+            if(user == null){
+                return Response.status(Response.Status.NOT_FOUND).entity("Usuário não encontrado!").build();
+            }
+
+            if(!user.getPassword().equals(loginRequestDTO.getPassword())){
+                return Response.status(Response.Status.BAD_REQUEST).entity("Senha inválida!").build();
+            }
+
+            return Response.ok().status(200).entity("Login feito com sucesso!").build();
+        }
+
     }
 
 

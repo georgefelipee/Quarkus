@@ -50,11 +50,11 @@ public class Account  extends PanacheEntity {
     }
 
     public BigDecimal getBalance() {
-        return BigDecimal.valueOf(balanceInCents, 2); // Convertendo centavos para BigDecimal
+        return BigDecimal.valueOf(balanceInCents, 0); // Convertendo centavos para BigDecimal
     }
 
     public void setBalance(BigDecimal balance) {
-        this.balanceInCents = balance.movePointRight(2).intValue(); // Convertendo BigDecimal para centavos
+        this.balanceInCents = balance.intValue(); // Convertendo BigDecimal para centavos
     }
 
 

@@ -6,11 +6,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.acme.hibernate.orm.panache.User;
 import org.acme.hibernate.orm.panache.dto.CreateAccountDTO;
 import org.acme.hibernate.orm.panache.dto.DepositAccountDTO;
+import org.acme.hibernate.orm.panache.dto.TransferAccountDTO;
 import org.acme.hibernate.orm.panache.enums.AccountType;
 import org.acme.hibernate.orm.panache.exceptions.ErrorResponseEdit;
 import org.acme.hibernate.orm.panache.exceptions.ResponseError;
@@ -20,6 +22,7 @@ import org.acme.hibernate.orm.panache.models.Account;
 import org.acme.hibernate.orm.panache.models.Agency;
 import org.acme.hibernate.orm.panache.models.TypeAccount;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Path("/accounts")
@@ -69,6 +72,7 @@ public class AccountResource {
             typeAccount.setHasLis(accountRequestDTO.isHasLis());
         }
 
+        typeAccount.persist();
         account.setTypeAccount_id(typeAccount);
         account.persist();
 
@@ -113,12 +117,49 @@ public class AccountResource {
         if(account == null){
             return Response.status(Response.Status.NOT_FOUND).entity("Conta não encontrada!").build();
         }
+        // Convertendo o valor do depósito para centavos
+        BigDecimal depositAmount = depositRequestDTO.getBalance().multiply(BigDecimal.valueOf(100));
+        System.out.println(" testee " + depositAmount);
 
-        account.setBalance(depositRequestDTO.getBalance());
+        // Adicionando o valor do depósito ao saldo da conta
+        BigDecimal balanceInCents = account.getBalance();
+        BigDecimal newBalanceInCents = balanceInCents.add(depositAmount);
+
+        // Atualizando o saldo da conta
+        account.setBalance(newBalanceInCents);
 
         return Response.status(200).entity("Depósito cocluído!").build();
 
+    }
 
+    @POST
+    @Path("/transfer")
+    @Transactional
+    public Response transferAccount(@Valid TransferAccountDTO transferRequestDTO){
+        Account accountOrigin = Account.findById(transferRequestDTO.getUser_origin_id());
+        if (accountOrigin == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Conta de origem não encontrada!").build();
+        }
+        Account accountDestiny = Account.findById(transferRequestDTO.getUser_destiny_id());
+        if (accountDestiny == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Conta de destino não encontrada!").build();
+        }
+
+        BigDecimal transferValue = transferRequestDTO.getTrasnferValue().multiply(BigDecimal.valueOf(100));
+        BigDecimal balanceOrigin = accountOrigin.getBalance();
+
+        if (balanceOrigin.compareTo(transferValue) < 0) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Saldo insuficiente!").build();
+        }
+
+        BigDecimal newBalanceOrigin = balanceOrigin.subtract(transferValue);
+        accountOrigin.setBalance(newBalanceOrigin);
+
+        BigDecimal balanceDestiny = accountDestiny.getBalance();
+        BigDecimal newBalanceDestiny = balanceDestiny.add(transferValue);
+        accountDestiny.setBalance(newBalanceDestiny);
+
+        return Response.status(200).entity("Transferência cocluída!").build();
     }
 
 
