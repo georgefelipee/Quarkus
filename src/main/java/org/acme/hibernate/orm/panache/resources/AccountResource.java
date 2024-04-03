@@ -93,7 +93,7 @@ public class AccountResource {
 
         List<Account> accounts = Account.findAll().list();
         List<AccountDTO> accountDTOs = accounts.stream()
-                .map(account -> new AccountDTO(account))
+                .map(AccountDTO::new)
                 .collect(Collectors.toList());
 
         return Response.ok(accountDTOs).status(200).build();
@@ -114,6 +114,7 @@ public class AccountResource {
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"admin", "user"})
     public Response deleteAccount(@PathParam("id") Long id){
         Account account = Account.findById(id);
         if(account == null){
@@ -135,7 +136,6 @@ public class AccountResource {
         }
         // Convertendo o valor do depósito para centavos
         BigDecimal depositAmount = depositRequestDTO.getBalance().multiply(BigDecimal.valueOf(100));
-        System.out.println(" testee " + depositAmount);
 
         // Adicionando o valor do depósito ao saldo da conta
         BigDecimal balanceInCents = account.getBalance();

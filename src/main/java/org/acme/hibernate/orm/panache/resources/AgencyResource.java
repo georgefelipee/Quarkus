@@ -3,6 +3,7 @@ package org.acme.hibernate.orm.panache.resources;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,7 @@ import java.util.Set;
 @ApplicationScoped
 @Consumes("application/json")
 @Produces("application/json")
+@RolesAllowed({"admin", "user"})
 public class AgencyResource {
 
     @Inject
@@ -43,7 +45,7 @@ public class AgencyResource {
             Agency agency = new Agency();
             agency.setNameAgency(agencyRequestDTO.getNameAgency()); // Supondo que o DTO tenha um método getName() para obter o nome da agência
             agency.setBank_id(bank);
-            agency.persistAndFlush();
+            agency.persist();
 
 
             // Retornar uma resposta de sucesso
