@@ -1,7 +1,8 @@
 package org.acme.hibernate.orm.panache;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.elytron.security.common.BcryptUtil;
+
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -14,11 +15,17 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.acme.hibernate.orm.panache.dto.CreateUserRequestDTo;
 import org.acme.hibernate.orm.panache.dto.LoginDTO;
+import org.acme.hibernate.orm.panache.dto.UserDTO;
 import org.acme.hibernate.orm.panache.exceptions.ResponseError;
+import org.acme.hibernate.orm.panache.responses.LoginResponse;
+import org.acme.hibernate.orm.panache.services.JwtServices;
 import org.acme.hibernate.orm.panache.services.UserService;
 
+
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Path("/users")
 @ApplicationScoped
@@ -28,6 +35,9 @@ public class UserResource {
 
     @Inject
     UserService userService;
+    @Inject
+    JwtServices jwtServices;
+
     @Inject
     Validator validator;
 
@@ -47,7 +57,9 @@ public class UserResource {
 
         user.setEmail(userRequestDTo.getEmail());
         user.setUsername(userRequestDTo.getUsername());
-        user.setPassword(userRequestDTo.getPassword());
+
+        String password = BcryptUtil.bcryptHash(userRequestDTo.getPassword());
+        user.setPassword(password);
 
        if(userService.isEmailExists(user.getEmail())) {
            return Response.status(Response.Status.BAD_REQUEST).entity("Email já existe!").build();
@@ -62,15 +74,26 @@ public class UserResource {
     }
 
     @GET
+    @RolesAllowed("admin")
     public Response listAllUsers(){
-        PanacheQuery<PanacheEntityBase> query = User.findAll();
-        return Response.ok(query.list()).status(200).build();
+        List<User> users = User.findAll().list();
+        List<UserDTO> userDTOs = users.stream()
+                .map(user -> new UserDTO(
+                        user.getId(),
+                        user.getName(),
+                        user.getAge(),
+                        user.getUsername(),
+                        user.getEmail()
+                ))
+                .collect(Collectors.toList());
+        return Response.ok(userDTOs).status(200).build();
 
     }
 
     @DELETE
     @Path("{id}")
     @Transactional
+    @RolesAllowed("admin")
     public Response deleteUser(Long id){
         User userEntity = User.findById(id);
         if(userEntity == null){
@@ -82,6 +105,7 @@ public class UserResource {
     @PUT
     @Path("{id}")
     @Transactional
+    @RolesAllowed("admin")
     public Response updateUser( Long id, CreateUserRequestDTo userRequestDTo){
         User userEntity = User.findById(id);
         if(userEntity == null){
@@ -119,12 +143,16 @@ public class UserResource {
             if(user == null){
                 return Response.status(Response.Status.NOT_FOUND).entity("Usuário não encontrado!").build();
             }
+            boolean passwordCompare = BcryptUtil.matches(loginRequestDTO.getPassword(), user.getPassword());
 
-            if(!user.getPassword().equals(loginRequestDTO.getPassword())){
+            if(!passwordCompare){
                 return Response.status(Response.Status.BAD_REQUEST).entity("Senha inválida!").build();
             }
 
-            return Response.ok().status(200).entity("Login feito com sucesso!").build();
+            String token =  jwtServices.generateToken(user.getUsername());
+            LoginResponse response = new LoginResponse("Login feito com sucesso!", token);
+
+            return Response.ok().status(200).entity(response).build();
         }
 
     }

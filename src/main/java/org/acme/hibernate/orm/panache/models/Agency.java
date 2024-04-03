@@ -38,4 +38,12 @@ public class Agency  extends PanacheEntity {
     public void setBank_id(Bank bank_id) {
         this.bank_id = bank_id;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Bank getBank() {
+        return bank_id;
+    }
 }

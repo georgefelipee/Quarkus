@@ -2,6 +2,7 @@ package org.acme.hibernate.orm.panache.resources;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.acme.hibernate.orm.panache.User;
+import org.acme.hibernate.orm.panache.dto.AccountDTO;
 import org.acme.hibernate.orm.panache.dto.CreateAccountDTO;
 import org.acme.hibernate.orm.panache.dto.DepositAccountDTO;
 import org.acme.hibernate.orm.panache.dto.TransferAccountDTO;
@@ -21,15 +23,20 @@ import jakarta.validation.Validator;
 import org.acme.hibernate.orm.panache.models.Account;
 import org.acme.hibernate.orm.panache.models.Agency;
 import org.acme.hibernate.orm.panache.models.TypeAccount;
+import org.jboss.logging.Logger;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Path("/accounts")
 @ApplicationScoped
 @Consumes("application/json")
 @Produces("application/json")
 public class AccountResource {
+
+    public static final Logger log = Logger.getLogger(AccountResource.class);
 
     @Inject
     Validator validator;
@@ -81,13 +88,21 @@ public class AccountResource {
 
     @GET
     public Response getAccounts(){
-        PanacheQuery<PanacheEntityBase> query = Account.findAll();
-        return Response.ok(query.list()).status(200).build();
+//        PanacheQuery<PanacheEntityBase> query = Account.findAll();
+//        return Response.ok(query.list()).status(200).build();
+
+        List<Account> accounts = Account.findAll().list();
+        List<AccountDTO> accountDTOs = accounts.stream()
+                .map(account -> new AccountDTO(account))
+                .collect(Collectors.toList());
+
+        return Response.ok(accountDTOs).status(200).build();
     }
 
     @GET
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"admin", "user"})
     public Response getAccount(Long id){
         Account account = Account.findById(id);
         if(account == null){
@@ -111,6 +126,7 @@ public class AccountResource {
     @POST
     @Path("/deposit/{id}")
     @Transactional
+    @RolesAllowed({"admin", "user"})
     public Response depositAccount(@PathParam("id") Long id, DepositAccountDTO depositRequestDTO){
         //Recebo em REAL R$1,00
         Account account = Account.findById(id);
@@ -135,12 +151,13 @@ public class AccountResource {
     @POST
     @Path("/transfer")
     @Transactional
+    @RolesAllowed({"admin", "user"})
     public Response transferAccount(@Valid TransferAccountDTO transferRequestDTO){
-        Account accountOrigin = Account.findById(transferRequestDTO.getUser_origin_id());
+        Account accountOrigin = Account.findById(transferRequestDTO.getUser_account_origin_id());
         if (accountOrigin == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("Conta de origem não encontrada!").build();
         }
-        Account accountDestiny = Account.findById(transferRequestDTO.getUser_destiny_id());
+        Account accountDestiny = Account.findById(transferRequestDTO.getUser_account_destiny_id());
         if (accountDestiny == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("Conta de destino não encontrada!").build();
         }
@@ -158,6 +175,16 @@ public class AccountResource {
         BigDecimal balanceDestiny = accountDestiny.getBalance();
         BigDecimal newBalanceDestiny = balanceDestiny.add(transferValue);
         accountDestiny.setBalance(newBalanceDestiny);
+
+        log.info("Transação realizada: Origem - Banco: "
+                + accountOrigin.getAgency_id().getBank_id().id +
+                " Agência: " + accountOrigin.getAgency_id().id +
+                " Conta: " + accountOrigin.id +
+                " Destino - Banco: " + accountDestiny.getAgency_id().getBank_id().id +
+                " Agência: " + accountDestiny.getAgency_id().id +
+                " Conta: " + accountDestiny.id + " Valor: " + "R$" + transferValue.divide(BigDecimal.valueOf(100)) +
+                " Data: " + java.time.LocalDate.now() + " Hora: " + java.time.LocalTime.now());
+
 
         return Response.status(200).entity("Transferência cocluída!").build();
     }

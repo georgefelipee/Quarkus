@@ -43,7 +43,7 @@ public class AgencyResource {
             Agency agency = new Agency();
             agency.setNameAgency(agencyRequestDTO.getNameAgency()); // Supondo que o DTO tenha um método getName() para obter o nome da agência
             agency.setBank_id(bank);
-            agency.persist();
+            agency.persistAndFlush();
 
 
             // Retornar uma resposta de sucesso

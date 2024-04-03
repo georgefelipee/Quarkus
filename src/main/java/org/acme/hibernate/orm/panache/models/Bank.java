@@ -24,4 +24,8 @@ public class Bank extends PanacheEntity {
     public void setNameBank(String nameBank) {
         this.nameBank = nameBank;
     }
+
+    public Long getId() {
+        return id;
+    }
 }

@@ -21,7 +21,7 @@ public class Account  extends PanacheEntity {
     public Agency agency_id;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "type_account_id", nullable = false)
     public TypeAccount typeAccount_id;
 
@@ -58,4 +58,11 @@ public class Account  extends PanacheEntity {
     }
 
 
+    public Long getId() {
+        return id;
+    }
+
+    public Agency getAgency() {
+        return agency_id;
+    }
 }

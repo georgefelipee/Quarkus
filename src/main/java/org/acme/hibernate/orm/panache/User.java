@@ -3,9 +3,10 @@ package org.acme.hibernate.orm.panache;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
+import io.quarkus.security.jpa.Password;
+import io.quarkus.security.jpa.PasswordType;
 import jakarta.persistence.*;
 import org.acme.hibernate.orm.panache.models.Account;
-
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class User extends  PanacheEntity {
     @Column(unique = true)
     public String email;
     @Column
+    @Password
     public String password;
 
     @OneToMany(mappedBy = "user_id", cascade = CascadeType.REMOVE)
@@ -68,5 +70,9 @@ public class User extends  PanacheEntity {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public Long getId() {
+        return id;
     }
 }
