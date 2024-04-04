@@ -15,20 +15,14 @@ import org.acme.hibernate.orm.panache.dto.AccountDTO;
 import org.acme.hibernate.orm.panache.dto.CreateAccountDTO;
 import org.acme.hibernate.orm.panache.dto.DepositAccountDTO;
 import org.acme.hibernate.orm.panache.dto.TransferAccountDTO;
-import org.acme.hibernate.orm.panache.enums.AccountType;
-import org.acme.hibernate.orm.panache.exceptions.ErrorResponseEdit;
-import org.acme.hibernate.orm.panache.exceptions.ResponseError;
-
 import jakarta.validation.Validator;
 import org.acme.hibernate.orm.panache.models.Account;
-import org.acme.hibernate.orm.panache.models.Agency;
-import org.acme.hibernate.orm.panache.models.TypeAccount;
 import org.acme.hibernate.orm.panache.services.AccountServices;
+import org.acme.hibernate.orm.panache.services.JwtServices;
 import org.jboss.logging.Logger;
+import org.jose4j.jwt.consumer.InvalidJwtException;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Path("/accounts")
@@ -37,13 +31,14 @@ import java.util.stream.Collectors;
 @Produces("application/json")
 public class AccountResource {
 
-    public static final Logger log = Logger.getLogger(AccountResource.class);
-
     @Inject
     Validator validator;
 
     @Inject
     AccountServices accountServices;
+
+    @Inject
+    JwtServices jwtServices;
 
     @POST
     @Transactional
@@ -96,23 +91,9 @@ public class AccountResource {
     @Transactional
     @RolesAllowed({"admin", "user"})
     public Response depositAccount(@PathParam("id") Long id, DepositAccountDTO depositRequestDTO){
-        //Recebo em REAL R$1,00
-        Account account = Account.findById(id);
-        if(account == null){
-            return Response.status(Response.Status.NOT_FOUND).entity("Conta não encontrada!").build();
-        }
-        // Convertendo o valor do depósito para centavos
-        BigDecimal depositAmount = depositRequestDTO.getBalance().multiply(BigDecimal.valueOf(100));
-
-        // Adicionando o valor do depósito ao saldo da conta
-        BigDecimal balanceInCents = account.getBalance();
-        BigDecimal newBalanceInCents = balanceInCents.add(depositAmount);
-
-        // Atualizando o saldo da conta
-        account.setBalance(newBalanceInCents);
+        accountServices.depositAccount(id, depositRequestDTO);
 
         return Response.status(200).entity("Depósito cocluído!").build();
-
     }
 
     @POST
@@ -120,42 +101,19 @@ public class AccountResource {
     @Transactional
     @RolesAllowed({"admin", "user"})
     public Response transferAccount(@Valid TransferAccountDTO transferRequestDTO){
-        Account accountOrigin = Account.findById(transferRequestDTO.getUser_account_origin_id());
-        if (accountOrigin == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Conta de origem não encontrada!").build();
-        }
-        Account accountDestiny = Account.findById(transferRequestDTO.getUser_account_destiny_id());
-        if (accountDestiny == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Conta de destino não encontrada!").build();
-        }
 
-        BigDecimal transferValue = transferRequestDTO.getTrasnferValue().multiply(BigDecimal.valueOf(100));
-        BigDecimal balanceOrigin = accountOrigin.getBalance();
+        accountServices.transferAccount(transferRequestDTO);
 
-        if (balanceOrigin.compareTo(transferValue) < 0) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Saldo insuficiente!").build();
-        }
-
-        BigDecimal newBalanceOrigin = balanceOrigin.subtract(transferValue);
-        accountOrigin.setBalance(newBalanceOrigin);
-
-        BigDecimal balanceDestiny = accountDestiny.getBalance();
-        BigDecimal newBalanceDestiny = balanceDestiny.add(transferValue);
-        accountDestiny.setBalance(newBalanceDestiny);
-
-        log.info("Transação realizada: Origem - Banco: "
-                + accountOrigin.getAgency_id().getBank_id().id +
-                " Agência: " + accountOrigin.getAgency_id().id +
-                " Conta: " + accountOrigin.id +
-                " Destino - Banco: " + accountDestiny.getAgency_id().getBank_id().id +
-                " Agência: " + accountDestiny.getAgency_id().id +
-                " Conta: " + accountDestiny.id + " Valor: " + "R$" + transferValue.divide(BigDecimal.valueOf(100)) +
-                " Data: " + java.time.LocalDate.now() + " Hora: " + java.time.LocalTime.now());
-
-
-        return Response.status(200).entity("Transferência cocluída!").build();
+        return Response.status(200).entity("Transferência concluída!").build();
     }
 
+    @GET
+    @Path("/decode")
+    @RolesAllowed({"admin", "user"})
+    public Response decodeToken(@HeaderParam("Authorization") String token) throws InvalidJwtException {
+        User user = jwtServices.decodeToken(token);
+        return Response.ok().status(200).entity(user).build();
+    }
 
 
 }

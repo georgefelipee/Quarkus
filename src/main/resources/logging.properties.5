@@ -1,9 +1,55 @@
-2024-04-04 15:05:26,566 detec65046802 code-with-quarkus-dev.jar[6297] INFO  [io.quarkus] (Quarkus Main Thread) code-with-quarkus 1.0.0-SNAPSHOT on JVM (powered by Quarkus 3.8.3) started in 0.508s. Listening on: http://localhost:8080
-2024-04-04 15:05:26,566 detec65046802 code-with-quarkus-dev.jar[6297] INFO  [io.quarkus] (Quarkus Main Thread) Profile dev activated. Live Coding activated.
-2024-04-04 15:05:26,566 detec65046802 code-with-quarkus-dev.jar[6297] INFO  [io.quarkus] (Quarkus Main Thread) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, hibernate-validator, jdbc-postgresql, narayana-jta, resteasy-reactive, resteasy-reactive-jackson, security, security-jpa, smallrye-context-propagation, smallrye-jwt, vertx]
-2024-04-04 15:05:26,566 detec65046802 code-with-quarkus-dev.jar[6297] INFO  [io.qua.dep.dev.RuntimeUpdatesProcessor] (vert.x-worker-thread-1) Live reload total time: 0.761s 
-2024-04-04 15:06:49,270 detec65046802 code-with-quarkus-dev.jar[6297] INFO  [io.qua.dep.dev.RuntimeUpdatesProcessor] (vert.x-worker-thread-1) Files changed but restart not needed - notified extensions in: 0.004s 
-2024-04-04 15:07:00,362 detec65046802 code-with-quarkus-dev.jar[6297] INFO  [io.qua.dep.dev.RuntimeUpdatesProcessor] (vert.x-worker-thread-1) Files changed but restart not needed - notified extensions in: 0.002s 
-2024-04-04 15:07:58,477 detec65046802 code-with-quarkus-dev.jar[6297] INFO  [io.qua.dep.dev.RuntimeUpdatesProcessor] (vert.x-worker-thread-1) Files changed but restart not needed - notified extensions in: 0.002s 
-2024-04-04 15:10:07,017 detec65046802 code-with-quarkus-dev.jar[6297] INFO  [io.qua.dep.dev.RuntimeUpdatesProcessor] (vert.x-worker-thread-1) Restarting quarkus due to changes in AccountDTO.class, AccountServices.class.
-2024-04-04 15:10:07,019 detec65046802 code-with-quarkus-dev.jar[6297] INFO  [io.quarkus] (Quarkus Main Thread) code-with-quarkus stopped in 0.002s
+2024-04-04 17:22:04,486 detec65046802 code-with-quarkus-dev.jar[20277] INFO  [io.quarkus] (Quarkus Main Thread) code-with-quarkus 1.0.0-SNAPSHOT on JVM (powered by Quarkus 3.8.3) started in 0.746s. Listening on: http://localhost:8080
+2024-04-04 17:22:04,488 detec65046802 code-with-quarkus-dev.jar[20277] INFO  [io.quarkus] (Quarkus Main Thread) Profile dev activated. Live Coding activated.
+2024-04-04 17:22:04,489 detec65046802 code-with-quarkus-dev.jar[20277] INFO  [io.quarkus] (Quarkus Main Thread) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, hibernate-validator, jdbc-postgresql, narayana-jta, resteasy-reactive, resteasy-reactive-jackson, security, security-jpa, smallrye-context-propagation, smallrye-jwt, vertx]
+2024-04-04 17:22:04,490 detec65046802 code-with-quarkus-dev.jar[20277] INFO  [io.qua.dep.dev.RuntimeUpdatesProcessor] (vert.x-worker-thread-1) Live reload total time: 1.441s 
+2024-04-04 17:22:17,096 detec65046802 code-with-quarkus-dev.jar[20277] ERROR [io.qua.ver.htt.run.QuarkusErrorHandler] (executor-thread-1) HTTP Request to /accounts/decode failed, error id: 65855354-a10f-4244-8830-c7c49dd8cc96-2: org.jose4j.jwt.consumer.InvalidJwtException: Unable to parse what was expected to be the JWT Claim Set JSON: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuY29tL2lzc3VlciIsInN1YiI6Im1hcmNvc2ZlbGlwZSIsImdyb3VwcyI6WyJ1c2VyIl0sImJpcnRoZGF0ZSI6IjIwMDEtMDctMTMiLCJleHAiOjE3MTIyNDk5OTUzMjAsImlhdCI6MTcxMjI0OTk5NCwianRpIjoiNjI3MDk4MzYtOTFlNy00MjE0LWE5YTYtM2RkZmUzYTU1YzRiIn0.hJ2oXExlpk0ThjyC495C6O9MiutNf0Rl4-SRS6wTiqEMk3lOQ1eViqhsbgL7hMAm4u7pN3lbDwrV_tvd4hEQ_pXT74vN3gZLzfvamPI7Hqq5KRkvAiwBCzlPUxucsLRJwUiJPkmB3l7XuQtre7WVdak04HXmJ-CUYqlnZ4tLAg6ZqC0fAr7vX1YfLlSWSLnKlQyd_1Y6LHRr_rl3Y1kUz8_IX7IS89Q2LfL_Wl1-324F_ovfCrCrUZefzkzkr9BtxbA44QF5J0K9J-AjaPM46QA7vlgtBV9qGRwRCoVDDMMi_igG4gic0NGvAPqd-c7AL4Nv3sMkR9YAL_39O0sh5g" Additional details: [[16] Invalid JSON.]
+	at org.jose4j.jwt.JwtClaims.<init>(JwtClaims.java:56)
+	at org.jose4j.jwt.JwtClaims.parse(JwtClaims.java:67)
+	at org.acme.hibernate.orm.panache.services.JwtServices.decodeToken(JwtServices.java:52)
+	at org.acme.hibernate.orm.panache.services.JwtServices_ClientProxy.decodeToken(Unknown Source)
+	at org.acme.hibernate.orm.panache.resources.AccountResource.decodeToken(AccountResource.java:114)
+	at org.acme.hibernate.orm.panache.resources.AccountResource_Subclass.decodeToken$$superforward(Unknown Source)
+	at org.acme.hibernate.orm.panache.resources.AccountResource_Subclass$$function$$8.apply(Unknown Source)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:73)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext$NextAroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:97)
+	at io.quarkus.security.runtime.interceptor.SecurityHandler.handle(SecurityHandler.java:27)
+	at io.quarkus.security.runtime.interceptor.RolesAllowedInterceptor.intercept(RolesAllowedInterceptor.java:29)
+	at io.quarkus.security.runtime.interceptor.RolesAllowedInterceptor_Bean.intercept(Unknown Source)
+	at io.quarkus.arc.impl.InterceptorInvocation.invoke(InterceptorInvocation.java:42)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:70)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:62)
+	at io.quarkus.resteasy.reactive.server.runtime.StandardSecurityCheckInterceptor.intercept(StandardSecurityCheckInterceptor.java:44)
+	at io.quarkus.resteasy.reactive.server.runtime.StandardSecurityCheckInterceptor_RolesAllowedInterceptor_Bean.intercept(Unknown Source)
+	at io.quarkus.arc.impl.InterceptorInvocation.invoke(InterceptorInvocation.java:42)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.perform(AroundInvokeInvocationContext.java:30)
+	at io.quarkus.arc.impl.InvocationContexts.performAroundInvoke(InvocationContexts.java:27)
+	at org.acme.hibernate.orm.panache.resources.AccountResource_Subclass.decodeToken(Unknown Source)
+	at org.acme.hibernate.orm.panache.resources.AccountResource_ClientProxy.decodeToken(Unknown Source)
+	at org.acme.hibernate.orm.panache.resources.AccountResource$quarkusrestinvoker$decodeToken_841a801eb3d12224ffb1179ead9a5a853fd8d33d.invoke(Unknown Source)
+	at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
+	at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:141)
+	at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:147)
+	at io.quarkus.vertx.core.runtime.VertxCoreRecorder$14.runWith(VertxCoreRecorder.java:582)
+	at org.jboss.threads.EnhancedQueueExecutor$Task.run(EnhancedQueueExecutor.java:2513)
+	at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1538)
+	at org.jboss.threads.DelegatingRunnable.run(DelegatingRunnable.java:29)
+	at org.jboss.threads.ThreadLocalResettingRunnable.run(ThreadLocalResettingRunnable.java:29)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+Caused by: org.jose4j.lang.JoseException: Parsing error: org.jose4j.json.internal.json_simple.parser.ParseException: Unexpected character (e) at position 0.
+	at org.jose4j.json.JsonUtil.parseJson(JsonUtil.java:71)
+	at org.jose4j.jwt.JwtClaims.<init>(JwtClaims.java:49)
+	... 32 more
+Caused by: org.jose4j.json.internal.json_simple.parser.ParseException: Unexpected character (e) at position 0.
+	at org.jose4j.json.internal.json_simple.parser.Yylex.yylex(Yylex.java:612)
+	at org.jose4j.json.internal.json_simple.parser.JSONParser.nextToken(JSONParser.java:267)
+	at org.jose4j.json.internal.json_simple.parser.JSONParser.parse(JSONParser.java:116)
+	at org.jose4j.json.internal.json_simple.parser.JSONParser.parse(JSONParser.java:79)
+	at org.jose4j.json.JsonUtil.parseJson(JsonUtil.java:62)
+	... 33 more
+
+2024-04-04 17:32:23,944 detec65046802 code-with-quarkus-dev.jar[20277] ERROR [io.qua.dep.dev.JavaCompilationProvider] (vert.x-worker-thread-1) cannot find symbol
+  symbol:   variable tokenUser
+  location: class org.acme.hibernate.orm.panache.services.JwtServices, line 55 in /home/unifor/Documentos/George/code-with-quarkus/src/main/java/org/acme/hibernate/orm/panache/services/JwtServices.java
+2024-04-04 17:32:33,185 detec65046802 code-with-quarkus-dev.jar[20277] INFO  [io.qua.dep.dev.RuntimeUpdatesProcessor] (vert.x-worker-thread-1) Restarting quarkus due to changes in JwtServices.class.
+2024-04-04 17:32:33,190 detec65046802 code-with-quarkus-dev.jar[20277] INFO  [io.quarkus] (Quarkus Main Thread) code-with-quarkus stopped in 0.003s

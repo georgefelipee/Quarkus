@@ -5,29 +5,22 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
-import jakarta.validation.Validator;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.core.Response;
 import org.acme.hibernate.orm.panache.User;
 import org.acme.hibernate.orm.panache.dto.CreateUserRequestDTo;
 import org.acme.hibernate.orm.panache.dto.LoginDTO;
 import org.acme.hibernate.orm.panache.dto.UpdateUserDTO;
 import org.acme.hibernate.orm.panache.dto.UserDTO;
-import org.acme.hibernate.orm.panache.exceptions.ResponseError;
+
 
 import java.util.List;
-import java.util.Set;
+
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class UserService {
-
-    @Inject
-    Validator validator;
-
     @Inject
     JwtServices jwtServices;
 
