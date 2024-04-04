@@ -25,7 +25,6 @@ public class User extends  PanacheEntity {
     @Column(unique = true)
     public String email;
     @Column
-    @Password
     public String password;
 
     @OneToMany(mappedBy = "user_id", cascade = CascadeType.REMOVE)

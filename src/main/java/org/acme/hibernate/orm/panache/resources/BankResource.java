@@ -6,16 +6,15 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
+import org.acme.hibernate.orm.panache.dto.BankDTO;
 import org.acme.hibernate.orm.panache.dto.CreateBankDTO;
-import org.acme.hibernate.orm.panache.dto.CreateUserRequestDTo;
-import org.acme.hibernate.orm.panache.exceptions.ResponseError;
 import org.acme.hibernate.orm.panache.models.Bank;
+import org.acme.hibernate.orm.panache.services.BankServices;
 
-import java.util.List;
-import java.util.Set;
 
 @Path("/banks")
 @ApplicationScoped
@@ -24,22 +23,13 @@ import java.util.Set;
 public class BankResource {
 
     @Inject
-    Validator validator;
+    BankServices bankServices;
 
     @POST
     @Transactional
-    public Response createBank(CreateBankDTO bankRequestDTO){
-        Set<ConstraintViolation<CreateBankDTO>> violations = validator.validate(bankRequestDTO);
-
-        if(!violations.isEmpty()){
-            ResponseError responseError = ResponseError.createFromValidation(violations);
-            return Response.status(Response.Status.BAD_REQUEST).entity(responseError).build();
-        }
-
-        Bank bank = new Bank();
-
-        bank.setNameBank(bankRequestDTO.getNameBank());
-        bank.persist();
+    public Response createBank(@Valid CreateBankDTO bankRequestDTO){
+        Bank createBank = bankServices.createBank(bankRequestDTO);
+        BankDTO bank = new BankDTO(createBank);
 
         return Response.ok(bank).status(201).build();
     }

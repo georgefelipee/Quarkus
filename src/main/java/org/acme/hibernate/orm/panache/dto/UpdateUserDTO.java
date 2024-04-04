@@ -1,30 +1,20 @@
 package org.acme.hibernate.orm.panache.dto;
 
-import org.acme.hibernate.orm.panache.User;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
-public class UserDTO {
-    private Long id;
+public class UpdateUserDTO {
+
     private String name;
     private Integer age;
+
     private String username;
+
+    @Pattern(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$", message = "Email inválido")
     private String email;
 
-    // Construtor
-    public UserDTO(Long id ,String name, Integer age, String username, String email) {
-        this.name = name;
-        this.age = age;
-        this.username = username;
-        this.email = email;
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private String password;
 
     public String getName() {
         return name;
@@ -56,5 +46,13 @@ public class UserDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

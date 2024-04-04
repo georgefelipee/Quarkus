@@ -23,6 +23,7 @@ import jakarta.validation.Validator;
 import org.acme.hibernate.orm.panache.models.Account;
 import org.acme.hibernate.orm.panache.models.Agency;
 import org.acme.hibernate.orm.panache.models.TypeAccount;
+import org.acme.hibernate.orm.panache.services.AccountServices;
 import org.jboss.logging.Logger;
 
 import java.math.BigDecimal;
@@ -41,49 +42,15 @@ public class AccountResource {
     @Inject
     Validator validator;
 
+    @Inject
+    AccountServices accountServices;
+
     @POST
     @Transactional
     public Response createAccount(CreateAccountDTO accountRequestDTO){
+        AccountDTO accountDTO = accountServices.createAccount(accountRequestDTO);
 
-        Set<ConstraintViolation<CreateAccountDTO>> violations = validator.validate(accountRequestDTO);
-
-        if(!violations.isEmpty()){
-            ResponseError responseError = ResponseError.createFromValidation(violations);
-            return Response.status(Response.Status.BAD_REQUEST).entity(responseError).build();
-        }
-
-        Account account = new Account();
-        TypeAccount typeAccount = new TypeAccount();
-
-        User user = User.findById(accountRequestDTO.getUser_id());
-        if(user == null){
-            ErrorResponseEdit errorResponse = new ErrorResponseEdit( "Usuario não encontrado!");
-            return Response.status(Response.Status.NOT_FOUND).entity(errorResponse).build();
-        }
-        account.setUser_id(user);
-
-        Agency agency = Agency.findById(accountRequestDTO.getAgency_id());
-        if(agency == null){
-            ErrorResponseEdit errorResponse = new ErrorResponseEdit( "Agência não encontrada!");
-            return Response.status(Response.Status.NOT_FOUND).entity(errorResponse).build();
-        }
-        account.setAgency_id(agency);
-
-        if (accountRequestDTO.getRole() == 1) {
-            typeAccount.setAccountType(AccountType.SPECIAL);
-            typeAccount.setHasCreditCard(accountRequestDTO.isHasCreditCard());
-
-        } else if(accountRequestDTO.getRole() == 2) {
-            typeAccount.setAccountType(AccountType.PREMIUM);
-            typeAccount.setHasCreditCard(accountRequestDTO.isHasCreditCard());
-            typeAccount.setHasLis(accountRequestDTO.isHasLis());
-        }
-
-        typeAccount.persist();
-        account.setTypeAccount_id(typeAccount);
-        account.persist();
-
-        return Response.ok().status(201).build();
+        return Response.ok(accountDTO).status(201).build();
     }
 
     @GET
