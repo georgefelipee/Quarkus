@@ -6,10 +6,13 @@ import io.smallrye.jwt.auth.principal.JWTAuthContextInfo;
 import io.smallrye.jwt.build.JwtClaimsBuilder;
 import io.smallrye.jwt.build.spi.JwtProvider;
 import io.smallrye.jwt.util.KeyUtils;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.impl.jose.JWT;
 import jakarta.enterprise.context.ApplicationScoped;
+import netscape.javascript.JSObject;
 import org.acme.hibernate.orm.panache.User;
 import org.eclipse.microprofile.jwt.Claims;
+import org.jose4j.json.internal.json_simple.JSONObject;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 
@@ -50,10 +53,11 @@ public class JwtServices {
         if(token !=null && token.startsWith("Bearer ")){
             token = token.substring(7);
         }
+
         var test = JWT.parse(token);
+        JsonObject value = (JsonObject) test.getValue("payload");
+        var username = value.getValue("sub");
 
-        System.out.println(test.getValue("payload"));
-
-        return User.find("username").firstResult();
+        return User.find("username", username).firstResult();
     }
 }

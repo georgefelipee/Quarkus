@@ -94,7 +94,7 @@ public class UserService {
     public UserDTO updateUser(Long id, UpdateUserDTO userRequestDTo){
         User user = User.findById(id);
         if(user == null){
-            throw new BadRequestException("Usuário não encontrado!");
+            throw new NotFoundException("Usuário não encontrado!");
         }
         if(isEmailExists(userRequestDTo.getEmail())) {
             throw new BadRequestException("Esse email já está cadastrado!");
