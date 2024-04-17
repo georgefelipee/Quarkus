@@ -41,6 +41,19 @@ public class AgencyServices {
 
     }
 
+    public List<AgencyDTO> listAllAgenciesByBank(Long bankId) {
+        Bank bank = Bank.findById(bankId);
+        if (bank == null) {
+            throw new NotFoundException("Banco não encontrado");
+        }
+
+        List<Agency> agencies = Agency.find("bank_id", bank).list();
+        List<AgencyDTO> agenciesDTO = agencies.stream()
+                .map(AgencyDTO::new).toList();
+
+        return agenciesDTO;
+    }
+
     public Agency updateAgency(Long id, CreateAgencyDTO agencyRequestDTO) {
         Agency agency = Agency.findById(id);
         if (agency == null) {

@@ -26,12 +26,7 @@ import java.util.Set;
 @ApplicationScoped
 public class JwtServices {
 
-    private JWTAuthContextInfo contextInfo;
 
-    public JwtServices() throws GeneralSecurityException, IOException {
-        RSAPublicKey publicKey = (RSAPublicKey) KeyUtils.readPublicKey("/publicKey.pem");
-         contextInfo = new JWTAuthContextInfo(publicKey, "https://example.com/issuer");
-    }
 
     public String generateToken(String  username) {
         Set<String> groups = new HashSet<>(

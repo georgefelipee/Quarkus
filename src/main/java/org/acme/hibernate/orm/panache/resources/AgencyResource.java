@@ -23,7 +23,6 @@ import java.util.List;
 @ApplicationScoped
 @Consumes("application/json")
 @Produces("application/json")
-@RolesAllowed({"admin", "user"})
 public class AgencyResource {
 
     @Inject
@@ -43,6 +42,12 @@ public class AgencyResource {
     public Response getAgencies() {
        List<AgencyDTO> agencyDTO = agencyServices.listAllAgencies();
 
+        return Response.ok(agencyDTO).status(200).build();
+    }
+    @GET
+    @Path("/bank/{bankId}")
+    public Response getAgencyByBank( Long bankId ){
+        List<AgencyDTO> agencyDTO = agencyServices.listAllAgenciesByBank(bankId);
         return Response.ok(agencyDTO).status(200).build();
     }
 
