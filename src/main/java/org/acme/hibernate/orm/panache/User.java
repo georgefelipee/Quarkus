@@ -17,9 +17,6 @@ public class User extends  PanacheEntity {
     @Column(length = 255,nullable = false)
     public String name;
 
-    @Column(nullable = false)
-    public Integer age;
-
     @Column(unique = true)
     public String username;
     @Column(unique = true)
@@ -63,13 +60,6 @@ public class User extends  PanacheEntity {
         this.name = name;
     }
 
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
 
     public Long getId() {
         return id;

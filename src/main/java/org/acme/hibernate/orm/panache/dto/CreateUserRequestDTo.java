@@ -12,7 +12,7 @@ public class CreateUserRequestDTo  {
 
     @NotBlank(message = "Nome é obrigaório")
     private String name;
-    private Integer age;
+
     @NotBlank(message = "Username é obrigatório")
     private String username;
 
@@ -54,12 +54,5 @@ public class CreateUserRequestDTo  {
         this.name = name;
     }
 
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
 
 }

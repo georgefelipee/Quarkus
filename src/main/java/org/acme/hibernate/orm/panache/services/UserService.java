@@ -50,8 +50,6 @@ public class UserService {
 
         User user = new User();
         user.setName(userRequestDTo.getName());
-        user.setAge(userRequestDTo.getAge());
-
         user.setEmail(userRequestDTo.getEmail());
         user.setUsername(userRequestDTo.getUsername());
 
@@ -74,7 +72,6 @@ public class UserService {
                 .map(user -> new UserDTO(
                         user.getId(),
                         user.getName(),
-                        user.getAge(),
                         user.getUsername(),
                         user.getEmail()
                 ))
@@ -104,7 +101,6 @@ public class UserService {
         }
 
         user.setName(userRequestDTo.getName());
-        user.setAge(userRequestDTo.getAge());
         user.setEmail(userRequestDTo.getEmail());
         user.setUsername(userRequestDTo.getUsername());
 
@@ -114,7 +110,7 @@ public class UserService {
         }
 
         user.persist();
-        UserDTO userDTO = new UserDTO( user.getId(), user.getName(), user.getAge(), user.getEmail(), user.getUsername());
+        UserDTO userDTO = new UserDTO( user.getId(), user.getName(), user.getEmail(), user.getUsername());
 
         return userDTO;
     }

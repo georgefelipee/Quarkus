@@ -16,7 +16,7 @@ public class AccountDTO {
     public AccountDTO(Account account) {
         this.id = account.getId();
         this.balanceInCents = account.getBalance();
-        this.user = new UserDTO(account.getUser_id().id,account.getUser_id().getName(), account.getUser_id().getAge(), account.getUser_id().getUsername(), account.getUser_id().getEmail());
+        this.user = new UserDTO(account.getUser_id().id,account.getUser_id().getName(), account.getUser_id().getUsername(), account.getUser_id().getEmail());
         this.agency = new AgencyDTO(account.getAgency());
         this.balance = account.getBalance();
     }

@@ -42,7 +42,9 @@ public class AccountServices {
         }
         account.setAgency_id(agency);
 
-        if (accountRequestDTO.getRole() == 1) {
+        if(accountRequestDTO.getRole() == 0){
+            typeAccount.setAccountType(AccountType.NORMAL);
+        }else if (accountRequestDTO.getRole() == 1) {
             typeAccount.setAccountType(AccountType.SPECIAL);
             typeAccount.setHasCreditCard(accountRequestDTO.isHasCreditCard());
 

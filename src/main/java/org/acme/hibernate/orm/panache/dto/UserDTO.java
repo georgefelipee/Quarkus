@@ -5,14 +5,13 @@ import org.acme.hibernate.orm.panache.User;
 public class UserDTO {
     private Long id;
     private String name;
-    private Integer age;
+
     private String username;
     private String email;
 
     // Construtor
-    public UserDTO(Long id ,String name, Integer age, String username, String email) {
+    public UserDTO(Long id ,String name, String username, String email) {
         this.name = name;
-        this.age = age;
         this.username = username;
         this.email = email;
         this.id = id;
@@ -32,14 +31,6 @@ public class UserDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
     }
 
     public String getUsername() {
