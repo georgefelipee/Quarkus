@@ -108,11 +108,18 @@ public class AccountResource {
     }
 
     @GET
-    @Path("/decode")
+    @Path("/user/{id}")
+    @Transactional
     @RolesAllowed({"admin", "user"})
-    public Response decodeToken(@HeaderParam("Authorization") String token) throws InvalidJwtException {
-        User user = jwtServices.decodeToken(token);
-        return Response.ok().status(200).entity(user).build();
+    public Response getAccountsByUser(@PathParam("id") Long id){
+        User user = User.findById(id);
+        List<Account> accounts = Account.find("user_id", user).list();
+
+        List<AccountDTO> accountDTOs = accounts.stream()
+                .map(AccountDTO::new)
+                .collect(Collectors.toList());
+
+        return Response.ok(accountDTOs).status(200).build();
     }
 
 

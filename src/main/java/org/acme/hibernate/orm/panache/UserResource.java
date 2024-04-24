@@ -18,7 +18,9 @@ import org.acme.hibernate.orm.panache.dto.UserDTO;
 
 import org.acme.hibernate.orm.panache.responses.LoginResponse;
 
+import org.acme.hibernate.orm.panache.services.JwtServices;
 import org.acme.hibernate.orm.panache.services.UserService;
+import org.jose4j.jwt.consumer.InvalidJwtException;
 
 
 import java.util.List;
@@ -31,6 +33,9 @@ public class UserResource {
 
     @Inject
     UserService userService;
+
+    @Inject
+    JwtServices jwtServices;
 
     @POST
     @Transactional
@@ -71,13 +76,30 @@ public class UserResource {
     @POST
     @Path("/login")
     @Transactional
-    public Response login(@Valid LoginDTO loginRequestDTO){
-            String token = userService.login(loginRequestDTO);
+    public Response login(@Valid LoginDTO loginRequestDTO) {
+        User user = null;
+        if (loginRequestDTO.getEmail() != null) {
+            user = userService.findByEmailOrUsername(loginRequestDTO.getEmail());
 
-            LoginResponse response = new LoginResponse("Login feito com sucesso!", token);
+        } else if (loginRequestDTO.getUsername() != null) {
+            user = userService.findByEmailOrUsername(loginRequestDTO.getUsername());
+        }
+        UserDTO userDTO = new UserDTO(user.getId(), user.getName(), user.getUsername(), user.getEmail());
 
-            return Response.ok().status(200).entity(response).build();
+        String token = userService.login(loginRequestDTO);
+        LoginResponse response = new LoginResponse("Login feito com sucesso!", token, userDTO);
+
+        return Response.ok().status(200).entity(response).build();
     }
+
+    @GET
+    @Path("/decode")
+    @RolesAllowed({"admin", "user"})
+    public Response decodeToken(@HeaderParam("Authorization") String token) throws InvalidJwtException {
+        User user = jwtServices.decodeToken(token);
+        return Response.ok().status(200).entity(user).build();
+    }
+
 
 
 }

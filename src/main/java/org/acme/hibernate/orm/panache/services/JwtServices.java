@@ -55,4 +55,5 @@ public class JwtServices {
 
         return User.find("username", username).firstResult();
     }
+
 }
